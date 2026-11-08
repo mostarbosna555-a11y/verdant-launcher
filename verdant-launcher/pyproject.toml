@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "verdant-launcher"
+version = "0.1.0"
+description = "A friends-first Minecraft Java launcher"
+requires-python = ">=3.11"
+dependencies = ["minecraft-launcher-lib==7.1", "PySide6-Essentials>=6.8,<7", "keyring>=25,<26", "requests>=2.32,<3", "pydantic>=2.9,<3"]
+
+[project.optional-dependencies]
+server = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1"]
+test = ["pytest>=8,<10", "httpx>=0.28,<1", "fastapi>=0.115,<1"]
+
+[project.scripts]
+verdant = "verdant.ui:main"
+
+[tool.setuptools.packages.find]
+include = ["verdant*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

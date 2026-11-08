@@ -1,0 +1,34 @@
+services:
+  friends:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    environment:
+      VERDANT_INVITE: ${VERDANT_INVITE:?Set a random invitation secret of at least 24 characters}
+      VERDANT_DB: /data/friends.sqlite3
+    volumes:
+      - friends-data:/data
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+  proxy:
+    image: caddy:2.10-alpine
+    environment:
+      VERDANT_DOMAIN: ${VERDANT_DOMAIN:?Set your public DNS hostname}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
+    depends_on: [friends]
+volumes:
+  friends-data:
+  caddy-data:
+  caddy-config:
